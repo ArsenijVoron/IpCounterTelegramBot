@@ -9,7 +9,7 @@ import json
 bot_config_file = open("bot_config.json", encoding="utf-8") # opening bot_config.json
 bot_config_dict: dict = json.loads(bot_config_file.read()) # extracting from json to dict
 bot_config_file.close() # closing bot_config.json 
-bot_token=bot_config_dict*(["token"]) # token
+bot_token=bot_config_dict["token"] # token
 bot = telebot.TeleBot(bot_token)
 #----------------------------
 
@@ -88,12 +88,16 @@ def main (msg):
     global objofdata
     global ip
     global mask
-    if ip == '':
+    if msg.text.lower().strip() == 'привет':
+        bot.send_message(msg.chat.id, 'И тебе привет!', parse_mode = 'html')
+    elif ip == '':
         if msg.text.lower().strip() == "бинарный ip" or msg.text.lower().strip() == "максимальное количество компьютеров" or msg.text.lower().strip() == "ip сети" or msg.text.lower().strip() == "широковещательный адрес" or msg.text.lower().strip() == "количество нулей в маске" or msg.text.lower().strip() == "номер в сети" or msg.text.lower().strip() == "все сразу":
             bot.send_message(msg.chat.id, 'пока что рано, сначала введи ip-адрес и маску', parse_mode = 'html')
         elif re.sub('\d','', msg.text) == '...':
-            if testip(msg.text) == 0:
-                bot.send_message(msg.chat.id, 'ip указан неверно', parse_mode = 'html')
+            if funcs.noerr(msg.text) == 0:
+                bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
+            elif testip(msg.text) == 0:
+                bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
             else:
                 bot.send_message(msg.chat.id, 'Хорошо, теперь маску', parse_mode = 'html')
         elif re.sub('\d','', msg.text) == '... ...':
@@ -113,18 +117,36 @@ def main (msg):
         elif re.sub('\d', '', msg.text).replace(' ', '') == '.../':
             getip = msg.text.replace(' ', '').split('/')[0]
             getmask = msg.text.replace(' ', '').split('/')[1]
-            if testip(getip) == 0 and int(getmask) > 32:
+            print('getmask =' + getmask)
+            if funcs.noerr(getip) == 0:
                 getip = ''
                 getmask = ''
-                bot.send_message(msg.chat.id, 'маска и ip указаны неправильно', parse_mode = 'html')
-            elif testip(getip) == 0:
+                mask = ''
+                ip = ''
+                bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
+            elif testip(getip) == 0 and int(getmask) > 32:
+                getmask = ''
                 getip = ''
+                mask = ''
+                ip = ''               
+                bot.send_message(msg.chat.id, 'маска и ip указан неправильно', parse_mode = 'html')
+            elif testip(getip) == 0:
+                getmask = ''
+                getip = ''
+                mask = ''
+                ip = ''                
                 bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
             elif re.sub('\D', '', getmask) == '':
+                getip = ''
                 getmask = ''
+                mask = ''
+                ip = ''
                 bot.send_message(msg.chat.id, 'маска указана неправильно', parse_mode = 'html')
             elif int(re.sub('\D', '', getmask)) > 32:
+                getip = ''
                 getmask = ''
+                mask = ''
+                ip = ''
                 bot.send_message(msg.chat.id, 'маска указана неправильно', parse_mode = 'html')
             else:
                 mask = 32 - int(getmask)
@@ -132,11 +154,13 @@ def main (msg):
                 choice(msg)
         else:
             bot.send_message(msg.chat.id, 'Я тебя не понимаю', parse_mode = 'html')
-    elif ip != '' and mask == '':
+    elif mask == '':
         if msg.text.lower().strip() == "бинарный ip" or msg.text.lower().strip() == "максимальное количество компьютеров" or msg.text.lower().strip() == "ip сети" or msg.text.lower().strip() == "широковещательный адрес" or msg.text.lower().strip() == "количество нулей в маске" or msg.text.lower().strip() == "номер в сети" or msg.text.lower().strip() == "все сразу":
             bot.send_message(msg.chat.id, 'пока что рано, сначала введи маску', parse_mode = 'html')
         elif re.sub('\d','', msg.text) == '...':
-            if testmask(msg.text) == False:
+            if funcs.noerr(msg.text) == 0:
+                bot.send_message(msg.chat.id, 'Маска указана неправильно', parse_mode = 'html')
+            elif testmask(msg.text) == False:
                 bot.send_message(msg.chat.id, 'Маска указана неправильно', parse_mode = 'html')
             else:
                 objofdata = ipclass.Ip(f'{ip}/{32 - mask}')
@@ -147,6 +171,7 @@ def main (msg):
             bot.send_message(msg.chat.id, 'Маска указана неправильно', parse_mode = 'html')
         elif int(re.sub('\D', '', msg.text)) <= 32:
             mask = 32 - int(re.sub('\D', '', msg.text))
+            objofdata = ipclass.Ip(f'{ip}/{mask}')
             choice(msg)
         else:
             bot.send_message(msg.chat.id, 'Я тебя не понимаю', parse_mode = 'html')
