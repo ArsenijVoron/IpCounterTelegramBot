@@ -1,21 +1,57 @@
-#----------------------------
+#---------------------------- imports
 import telebot
 from telebot import types
 import re
 import funcs
 import ipclass
 import json
-#----------------------------
+#---------------------------- token
 bot_config_file = open("bot_config.json", encoding="utf-8") # opening bot_config.json
 bot_config_dict: dict = json.loads(bot_config_file.read()) # extracting from json to dict
 bot_config_file.close() # closing bot_config.json 
 bot_token = bot_config_dict["token"] # token
 bot = telebot.TeleBot(bot_token)
-#----------------------------
-
+#---------------------------- globals
 ip = ''
 mask = ''
 objofdata = ''
+#---------------------------- functions 
+def masks(msg):
+    markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 3)
+    b1 = types.KeyboardButton("0.0.0.0")
+    b2 = types.KeyboardButton("128.0.0.0")
+    b3 = types.KeyboardButton("192.0.0.0")
+    b4 = types.KeyboardButton("224.0.0.0")
+    b5 = types.KeyboardButton("240.0.0.0")
+    b6 = types.KeyboardButton("248.0.0.0")
+    b7 = types.KeyboardButton("252.0.0.0")
+    b8 = types.KeyboardButton("254.0.0.0")
+    b9 = types.KeyboardButton("255.0.0.0")
+    b10 = types.KeyboardButton("255.128.0.0")
+    b11 = types.KeyboardButton("255.192.0.0")
+    b12 = types.KeyboardButton("255.224.0.0")
+    b13 = types.KeyboardButton("255.240.0.0")
+    b14 = types.KeyboardButton("255.252.0.0")
+    b15 = types.KeyboardButton("255.254.0.0")
+    b16 = types.KeyboardButton("255.255.0.0")
+    b17 = types.KeyboardButton("255.255.128.0")
+    b18 = types.KeyboardButton("255.255.192.0")
+    b19 = types.KeyboardButton("255.255.224.0")
+    b20 = types.KeyboardButton("255.255.240.0")
+    b21 = types.KeyboardButton("255.255.248.0")
+    b22 = types.KeyboardButton("255.255.252.0")
+    b23 = types.KeyboardButton("255.255.254.0")
+    b24 = types.KeyboardButton("255.255.255.0")
+    b25 = types.KeyboardButton("255.255.255.128")
+    b26 = types.KeyboardButton("255.255.255.192")
+    b27 = types.KeyboardButton("255.255.255.224")
+    b28 = types.KeyboardButton("255.255.255.240")
+    b29 = types.KeyboardButton("255.255.255.248")
+    b30 = types.KeyboardButton("255.255.255.252")
+    b31 = types.KeyboardButton("255.255.255.254")
+    b32 = types.KeyboardButton("255.255.255.255")
+    markup.add(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19,b20,b21,b22,b23,b24,b25,b26,b27,b28,b29,b30,b31,b32)
+    bot.send_message(msg.chat.id, '(можешь написать, а можешь выбрать)', parse_mode = 'html', reply_markup = markup)
 
 def testip (newip):
     global ip
@@ -25,6 +61,7 @@ def testip (newip):
             return 0
     ip = '.'.join(newip)
     return 1
+
 def testmask (testmask):
     if len(testmask) < 7 or len(testmask) > 15:
         return False
@@ -53,7 +90,7 @@ def testmask (testmask):
             if newmask[i] != newmask[i+1]:
                 return False
     mask = zero
-    return zero
+    return 1
 
 def choice (message):
     global objofdata
@@ -67,22 +104,27 @@ def choice (message):
     b7 = types.KeyboardButton("все сразу")
     markup.add(b1, b2, b3, b4, b5, b6, b7)
     bot.send_message(message.chat.id, 'Хорошо, теперь выбери то, что ты хочешь посчитать!', parse_mode = 'html', reply_markup = markup)
-@bot.message_handler(commands = ['help'])
-def help(msg):
-    global ip
-    global mask 
-    ip = mask = ''
-    message = 'Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями'
-    bot.send_message(msg.chat.id, message, parse_mode = 'html')
-
+#---------------------------- commands
 @bot.message_handler(commands = ['start'])
 def start (msg):
-    global ip
-    global mask 
+    global ip, mask
     ip = mask = ''
-    message = f'Привет, <b>{msg.from_user.full_name}</b>! Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями'
+    message = f'Привет, <b>{msg.from_user.full_name}</b>! Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями. На случай подсчета нового ip напиши /new'
     bot.send_message(msg.chat.id, message, parse_mode = 'html')
 
+@bot.message_handler(commands = ['help'])
+def help(msg):
+    global ip, mask
+    ip = mask = ''
+    message = 'Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями. На случай подсчета нового ip напиши /new'
+    bot.send_message(msg.chat.id, message, parse_mode = 'html')
+
+@bot.message_handler(commands = ['new'])
+def new (msg):
+    global ip, mask
+    ip = mask = ''
+    bot.send_message(msg.chat.id, 'Хорошо, введи ip и маску, ты уже знаешь что делать', parse_mode = 'html')
+#---------------------------- main code
 @bot.message_handler()
 def main (msg):
     global objofdata
@@ -100,6 +142,7 @@ def main (msg):
                 bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
             else:
                 bot.send_message(msg.chat.id, 'Хорошо, теперь маску', parse_mode = 'html')
+                masks(msg)
         elif re.sub('\d','', msg.text) == '... ...':
             getip = msg.text.split(' ')[0]
             getmask = msg.text.split(' ')[1]
@@ -117,7 +160,6 @@ def main (msg):
         elif re.sub('\d', '', msg.text).replace(' ', '') == '.../':
             getip = msg.text.replace(' ', '').split('/')[0]
             getmask = msg.text.replace(' ', '').split('/')[1]
-            print('getmask =' + getmask)
             if funcs.noerr(getip) == 0:
                 getip = getmask = mask = ip = ''
                 bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
@@ -178,10 +220,12 @@ def main (msg):
             bot.send_message(msg.chat.id, mes, parse_mode = 'html')
         else:
             bot.send_message(msg.chat.id, 'Я тебя не понимаю', parse_mode = 'html')
-
+#---------------------------- none_stop
 while True:
     try:
         bot.polling(none_stop=True, interval=0)
     except:
         pass
+
+
 
