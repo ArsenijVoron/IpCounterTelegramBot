@@ -12,6 +12,8 @@ bot_config_file.close() # closing bot_config.json
 bot_token = bot_config_dict["token"] # token
 bot = telebot.TeleBot(bot_token)
 #---------------------------- globals
+my_id = bot_config_dict["myid"]
+review = 0
 ip = ''
 mask = ''
 objofdata = ''
@@ -31,26 +33,27 @@ def masks(msg):
     b11 = types.KeyboardButton("255.192.0.0")
     b12 = types.KeyboardButton("255.224.0.0")
     b13 = types.KeyboardButton("255.240.0.0")
-    b14 = types.KeyboardButton("255.252.0.0")
-    b15 = types.KeyboardButton("255.254.0.0")
-    b16 = types.KeyboardButton("255.255.0.0")
-    b17 = types.KeyboardButton("255.255.128.0")
-    b18 = types.KeyboardButton("255.255.192.0")
-    b19 = types.KeyboardButton("255.255.224.0")
-    b20 = types.KeyboardButton("255.255.240.0")
-    b21 = types.KeyboardButton("255.255.248.0")
-    b22 = types.KeyboardButton("255.255.252.0")
-    b23 = types.KeyboardButton("255.255.254.0")
-    b24 = types.KeyboardButton("255.255.255.0")
-    b25 = types.KeyboardButton("255.255.255.128")
-    b26 = types.KeyboardButton("255.255.255.192")
-    b27 = types.KeyboardButton("255.255.255.224")
-    b28 = types.KeyboardButton("255.255.255.240")
-    b29 = types.KeyboardButton("255.255.255.248")
-    b30 = types.KeyboardButton("255.255.255.252")
-    b31 = types.KeyboardButton("255.255.255.254")
-    b32 = types.KeyboardButton("255.255.255.255")
-    markup.add(b1,b2,b3,b4,b5,b6,b7,b8,b9,b10,b11,b12,b13,b14,b15,b16,b17,b18,b19,b20,b21,b22,b23,b24,b25,b26,b27,b28,b29,b30,b31,b32)
+    b14 = types.KeyboardButton("255.248.0.0")
+    b15 = types.KeyboardButton("255.252.0.0")
+    b16 = types.KeyboardButton("255.254.0.0")
+    b17 = types.KeyboardButton("255.255.0.0")
+    b18 = types.KeyboardButton("255.255.128.0")
+    b19 = types.KeyboardButton("255.255.192.0")
+    b20 = types.KeyboardButton("255.255.224.0")
+    b21 = types.KeyboardButton("255.255.240.0")
+    b22 = types.KeyboardButton("255.255.248.0")
+    b23 = types.KeyboardButton("255.255.252.0")
+    b24 = types.KeyboardButton("255.255.254.0")
+    b25 = types.KeyboardButton("255.255.255.0")
+    b26 = types.KeyboardButton("255.255.255.128")
+    b27 = types.KeyboardButton("255.255.255.192")
+    b28 = types.KeyboardButton("255.255.255.224")
+    b29 = types.KeyboardButton("255.255.255.240")
+    b30 = types.KeyboardButton("255.255.255.248")
+    b31 = types.KeyboardButton("255.255.255.252")
+    b32 = types.KeyboardButton("255.255.255.254")
+    b33 = types.KeyboardButton("255.255.255.255")
+    markup.add(b1, b2, b3, b4, b5, b6, b7, b8, b9, b10, b11, b12, b13, b14, b15, b16, b17, b18, b19, b20, b21, b22, b23, b24, b25, b26, b27, b28, b29, b30, b31, b32, b33)
     bot.send_message(msg.chat.id, '(можешь написать, а можешь выбрать)', parse_mode = 'html', reply_markup = markup)
 
 def testip (newip):
@@ -95,28 +98,27 @@ def testmask (testmask):
 def choice (message):
     global objofdata
     markup = types.ReplyKeyboardMarkup(resize_keyboard = True, row_width = 2)
-    b1 = types.KeyboardButton("бинарный ip")
-    b2 = types.KeyboardButton("Максимальное количество компьютеров")
-    b3 = types.KeyboardButton("ip сети")
-    b4 = types.KeyboardButton("Номер в сети")
-    b5 = types.KeyboardButton("широковещательный адрес")
-    b6 = types.KeyboardButton("количество нулей в маске")
-    b7 = types.KeyboardButton("все сразу")
-    markup.add(b1, b2, b3, b4, b5, b6, b7)
+    b1 = types.KeyboardButton("Бинарный ip")
+    b2 = types.KeyboardButton("Бинарная маска")
+    b3 = types.KeyboardButton("Максимальное количество компьютеров")
+    b4 = types.KeyboardButton("ip сети")
+    b5 = types.KeyboardButton("Номер в сети")
+    b6 = types.KeyboardButton("Широковещательный адрес")
+    b7 = types.KeyboardButton("Количество нулей в маске")
+    b8 = types.KeyboardButton("Все сразу")
+    markup.add(b1, b2, b3, b4, b5, b6, b7, b8)
     bot.send_message(message.chat.id, 'Хорошо, теперь выбери то, что ты хочешь посчитать!', parse_mode = 'html', reply_markup = markup)
 #---------------------------- commands
 @bot.message_handler(commands = ['start'])
 def start (msg):
     global ip, mask
     ip = mask = ''
-    message = f'Привет, <b>{msg.from_user.full_name}</b>! Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями. На случай подсчета нового ip напиши /new'
+    message = f'Привет, <b>{msg.from_user.full_name}</b>! Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями. На случай подсчета нового ip напиши /new. Так же если, хочешь оставить отзыв, пропиши /review'
     bot.send_message(msg.chat.id, message, parse_mode = 'html')
 
 @bot.message_handler(commands = ['help'])
 def help(msg):
-    global ip, mask
-    ip = mask = ''
-    message = 'Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями. На случай подсчета нового ip напиши /new'
+    message = 'Введи айпи и маску в десятичном виде, а я посчитаю то, что ты хочешь! Вот примеры, что бы тебе было удобнее: \n 12.12.12.12 255.255.254.0 или 12.12.12.12/24, или тоже самое, но разными сообщениями. На случай подсчета нового ip напиши /new. Так же, если хочешь оставить отзыв, пропиши /review'
     bot.send_message(msg.chat.id, message, parse_mode = 'html')
 
 @bot.message_handler(commands = ['new'])
@@ -124,16 +126,28 @@ def new (msg):
     global ip, mask
     ip = mask = ''
     bot.send_message(msg.chat.id, 'Хорошо, введи ip и маску, ты уже знаешь что делать', parse_mode = 'html')
+
+@bot.message_handler(commands = ['review'])
+def review (msg):
+    global review
+    review = 1
+    bot.send_message(msg.chat.id, 'Напиши одним собщением, что бы ты хотел передать', parse_mode = 'html')
 #---------------------------- main code
 @bot.message_handler()
 def main (msg):
+    global review
     global objofdata
     global ip
     global mask
+    if review == 1:
+        review = 0
+        bot.send_message(my_id, f'Новый отзыв от {msg.from_user.full_name}: \n {msg.text}', parse_mode = 'html')
+        bot.send_message(msg.chat.id, f'Спасибо за отзыв:)', parse_mode = 'html')
+        return 0
     if msg.text.lower().strip() == 'привет':
         bot.send_message(msg.chat.id, 'И тебе привет!', parse_mode = 'html')
     elif ip == '':
-        if msg.text.lower().strip() == "бинарный ip" or msg.text.lower().strip() == "максимальное количество компьютеров" or msg.text.lower().strip() == "ip сети" or msg.text.lower().strip() == "широковещательный адрес" or msg.text.lower().strip() == "количество нулей в маске" or msg.text.lower().strip() == "номер в сети" or msg.text.lower().strip() == "все сразу":
+        if msg.text.lower().strip() == "бинарный ip" or msg.text.lower().strip() == "максимальное количество компьютеров" or msg.text.lower().strip() == "ip сети" or msg.text.lower().strip() == "широковещательный адрес" or msg.text.lower().strip() == "количество нулей в маске" or msg.text.lower().strip() == "номер в сети" or msg.text.lower().strip() == "все сразу" or msg.text.lower().strip() == "бинарная маска":
             bot.send_message(msg.chat.id, 'пока что рано, сначала введи ip-адрес и маску', parse_mode = 'html')
         elif re.sub('\d','', msg.text) == '...':
             if funcs.noerr(msg.text) == 0:
@@ -165,7 +179,7 @@ def main (msg):
                 bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
             elif testip(getip) == 0 and int(getmask) > 32:
                 getip = getmask = mask = ip = ''
-                bot.send_message(msg.chat.id, 'маска и ip указан неправильно', parse_mode = 'html')
+                bot.send_message(msg.chat.id, 'маска и ip указаны неправильно', parse_mode = 'html')
             elif testip(getip) == 0:
                 getip = getmask = mask = ip = ''    
                 bot.send_message(msg.chat.id, 'ip указан неправильно', parse_mode = 'html')
@@ -182,7 +196,7 @@ def main (msg):
         else:
             bot.send_message(msg.chat.id, 'Я тебя не понимаю', parse_mode = 'html')
     elif mask == '':
-        if msg.text.lower().strip() == "бинарный ip" or msg.text.lower().strip() == "максимальное количество компьютеров" or msg.text.lower().strip() == "ip сети" or msg.text.lower().strip() == "широковещательный адрес" or msg.text.lower().strip() == "количество нулей в маске" or msg.text.lower().strip() == "номер в сети" or msg.text.lower().strip() == "все сразу":
+        if msg.text.lower().strip() == "бинарный ip" or msg.text.lower().strip() == "максимальное количество компьютеров" or msg.text.lower().strip() == "ip сети" or msg.text.lower().strip() == "широковещательный адрес" or msg.text.lower().strip() == "количество нулей в маске" or msg.text.lower().strip() == "номер в сети" or msg.text.lower().strip() == "все сразу" or msg.text.lower().strip() == "бинарная маска":
             bot.send_message(msg.chat.id, 'пока что рано, сначала введи маску', parse_mode = 'html')
         elif re.sub('\d','', msg.text) == '...':
             if funcs.noerr(msg.text) == 0:
@@ -190,6 +204,7 @@ def main (msg):
             elif testmask(msg.text) == False:
                 bot.send_message(msg.chat.id, 'Маска указана неправильно', parse_mode = 'html')
             else:
+                mask = 32-mask
                 objofdata = ipclass.Ip(f'{ip}/{32 - mask}')
                 choice(msg)
         elif re.sub('\D', '', msg.text) == '':
@@ -197,27 +212,30 @@ def main (msg):
         elif int(re.sub('\D', '', msg.text)) > 32:
             bot.send_message(msg.chat.id, 'Маска указана неправильно', parse_mode = 'html')
         elif int(re.sub('\D', '', msg.text)) <= 32:
-            mask = 32 - int(re.sub('\D', '', msg.text))
-            objofdata = ipclass.Ip(f'{ip}/{mask}')
+            mask = int(re.sub('\D', '', msg.text))
+            mask = 32 - mask
+            objofdata = ipclass.Ip(f'{ip}/{32 - mask}')
             choice(msg)
         else:
             bot.send_message(msg.chat.id, 'Я тебя не понимаю', parse_mode = 'html')
     else:
         if msg.text.lower().strip() == "бинарный ip":
-            bot.send_message(msg.chat.id, f'бинарный ip: {objofdata.binip}', parse_mode = 'html')
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n бинарный ip: {objofdata.binip}', parse_mode = 'html')
         elif msg.text.lower().strip() == "максимальное количество компьютеров":
-            bot.send_message(msg.chat.id, f'максимальное количество компьютеров: {objofdata.maxHosts}', parse_mode = 'html')
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n максимальное количество компьютеров: {objofdata.maxHosts}', parse_mode = 'html')
         elif msg.text.lower().strip() == "ip сети":
-            bot.send_message(msg.chat.id, f'ip сети: {objofdata.ipOfLink}', parse_mode = 'html')
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n ip сети: {objofdata.ipOfLink}', parse_mode = 'html')
         elif msg.text.lower().strip() == "номер в сети":
-            bot.send_message(msg.chat.id, f'номер в сети: {objofdata.numberInLink}', parse_mode = 'html')
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n номер в сети: {objofdata.numberInLink}', parse_mode = 'html')
         elif msg.text.lower().strip() == "широковещательный адрес":
-            bot.send_message(msg.chat.id, f'широковещательный адрес: {objofdata.broadcastaAddress}', parse_mode = 'html')
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n широковещательный адрес: {objofdata.broadcastaAddress}', parse_mode = 'html')
         elif msg.text.lower().strip() == "количество нулей в маске":
-            bot.send_message(msg.chat.id, f'количество нулей в маске: {objofdata.amoutOfZero}', parse_mode = 'html')
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n количество нулей в маске: {objofdata.amoutOfZero}', parse_mode = 'html')
         elif msg.text.lower().strip() == "все сразу":
-            mes = f'бинарный ip: {objofdata.binip} \n максимальное количество компьютеров: {objofdata.maxHosts} \n количество нулей в маске: {objofdata.amoutOfZero} \n ip сети: {objofdata.ipOfLink} \n номер в сети: {objofdata.numberInLink} \n широковещательный адрес: {objofdata.broadcastaAddress}'
+            mes = f'Для {ip}/{32 - mask}: \n бинарный ip: {objofdata.binip} \n бинарная маска: {objofdata.binmask} \n максимальное количество компьютеров: {objofdata.maxHosts} \n количество нулей в маске: {objofdata.amoutOfZero} \n ip сети: {objofdata.ipOfLink} \n номер в сети: {objofdata.numberInLink} \n широковещательный адрес: {objofdata.broadcastaAddress}'
             bot.send_message(msg.chat.id, mes, parse_mode = 'html')
+        elif msg.text.lower().strip() == "бинарная маска":
+            bot.send_message(msg.chat.id, f'Для {ip}/{32 - mask}: \n бинарная маска: {objofdata.binmask}', parse_mode = 'html')
         else:
             bot.send_message(msg.chat.id, 'Я тебя не понимаю', parse_mode = 'html')
 #---------------------------- none_stop
