@@ -204,7 +204,6 @@ def main (msg):
             elif testmask(msg.text) == False:
                 bot.send_message(msg.chat.id, 'Маска указана неправильно', parse_mode = 'html')
             else:
-                mask = 32-mask
                 objofdata = ipclass.Ip(f'{ip}/{32 - mask}')
                 choice(msg)
         elif re.sub('\D', '', msg.text) == '':
